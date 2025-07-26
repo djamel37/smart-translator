@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Translator</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1c1c2d;
+      color: #fff;
+    }
+    header {
+      background-color: #2b2b44;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    header h1 { margin: 0; font-size: 24px; }
+    nav a {
+      color: #fff;
+      margin-left: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    section {
+      padding: 40px 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+    h2 { color: #6a5acd; font-size: 28px; margin-bottom: 10px; }
+    .translator-box {
+      background: #2d2d44;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px #0003;
+    }
+    textarea, select {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      resize: none;
+    }
+    textarea { height: 120px; }
+    button {
+      padding: 12px 22px;
+      font-size: 16px;
+      border-radius: 8px;
+      background-color: #6a5acd;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin: 5px;
+    }
+    footer {
+      background-color: #2b2b44;
+      color: #aaa;
+      text-align: center;
+      padding: 20px;
+    }
+    footer a { color: #ccc; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Smart Translator</h1>
+    <nav>
+      <a href="#tool">Translator</a>
+      <a href="#about">About</a>
+      <a href="#features">Features</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section id="tool">
+    <h2>Instant Translation</h2>
+    <p>Type your text, choose the languages, and get real-time translation.</p>
+    <div class="translator-box">
+      <select id="sourceLang">
+        <option value="en">English</option>
+        <option value="fr">French</option>
+        <option value="ar">Arabic</option>
+      </select>
+      <textarea id="inputText" placeholder="Type text to translate..."></textarea>
+      <select id="targetLang">
+        <option value="ar">Arabic</option>
+        <option value="en">English</option>
+        <option value="fr">French</option>
+      </select>
+      <textarea id="outputText" placeholder="Translation will appear here..." readonly></textarea>
+      <div>
+        <button onclick="copyText()">📋 Copy</button>
+        <button onclick="speakText()">🔊 Speak</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <h2>About Smart Translator</h2>
+    <p>Smart Translator is a modern tool designed to offer fast, accurate, and user-friendly translation between languages. Whether you're learning, communicating, or just exploring languages – we've got you covered.</p>
+  </section>
+
+  <section id="features">
+    <h2>Key Features</h2>
+    <ul>
+      <li>🔁 Real-time translation while typing</li>
+      <li>📋 One-click copy to clipboard</li>
+      <li>🔊 Text-to-speech output</li>
+      <li>📱 Mobile-friendly responsive design</li>
+      <li>🌙 Dark-themed modern UI</li>
+    </ul>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <p>If you have feedback or suggestions, feel free to email us at <strong>smarttranslator@email.com</strong>.</p>
+  </section>
+
+  <footer>
+    &copy; 2025 Smart Translator. All rights reserved. | <a href="#">Privacy Policy</a>
+  </footer>
+
+  <script>
+    async function translateText() {
+      const input = document.getElementById("inputText").value.trim();
+      const from = document.getElementById("sourceLang").value;
+      const to = document.getElementById("targetLang").value;
+      if (!input) return;
+      try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(input)}&langpair=${from}|${to}`);
+        const data = await res.json();
+        document.getElementById("outputText").value = data.responseData.translatedText;
+      } catch {
+        document.getElementById("outputText").value = "Translation failed.";
+      }
+    }
+
+    function copyText() {
+      const text = document.getElementById("outputText");
+      text.select();
+      document.execCommand("copy");
+      alert("✅ Translation copied!");
+    }
+
+    function speakText() {
+      const text = document.getElementById("outputText").value;
+      const lang = document.getElementById("targetLang").value;
+      const speech = new SpeechSynthesisUtterance(text);
+      speech.lang = lang;
+      window.speechSynthesis.speak(speech);
+    }
+
+    document.getElementById("inputText").addEventListener("input", translateText);
+    document.getElementById("sourceLang").addEventListener("change", translateText);
+    document.getElementById("targetLang").addEventListener("change", translateText);
+  </script>
+</body>
+</html>
